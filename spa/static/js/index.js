@@ -1,3 +1,4 @@
+import game from './views/game.js';
 import games from './views/games.js';
 import home from './views/home.js';
 
@@ -26,7 +27,7 @@ async function router() {
   const routes = [
     { path: '/',          view: (params) => new home(params) },
     { path: '/jogos',     view: (params) => new games(params) },
-    { path: '/jogos/:id', view: (params) => new games(params) }
+    { path: '/jogos/:id', view: (params) => new game(params) }
   ];
 
   const potencialMatches = routes.map(route => {

@@ -4,13 +4,15 @@ export default class extends AbstractView {
   constructor(params) {
     super(params);
 
-    this.setTitle('xpcDeckTruco | Jogos');
+    this.setTitle('xpcDeckTruco | Jogo');
   }
 
-  getHtml() { 
+  getHtml() {
+    console.log(this.params.id);
 
     return `
-      <h1>Lista de Jogos</h1> 
+      <h1>oiii</h1>
+      <p>123</p>    
     `;
   }
 }
