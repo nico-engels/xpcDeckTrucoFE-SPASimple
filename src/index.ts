@@ -4,7 +4,7 @@ import fs from 'fs';
 import express, { Request, Response } from 'express';
 import http from 'node:http';
 import https from 'node:https';
-import path, { dirname } from 'node:path';
+import path from 'node:path';
 import session from 'express-session';
 
 import apiLnk from './apiLnk.ts';
