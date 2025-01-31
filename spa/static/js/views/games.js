@@ -7,8 +7,7 @@ export default class extends AbstractView {
     this.setTitle('xpcDeckTruco | Jogos');
   }
 
-  getHtml() { 
-
+  getHtml() {
     return `
       <h1>Lista de Jogos</h1> 
     `;

@@ -11,7 +11,5 @@ export default class {
     return '';
   }
 
-  afterLoad() {
-    
-  }
+  afterLoad() {}
 }
