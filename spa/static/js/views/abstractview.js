@@ -10,4 +10,8 @@ export default class {
   getHtml() {
     return '';
   }
+
+  afterLoad() {
+    
+  }
 }

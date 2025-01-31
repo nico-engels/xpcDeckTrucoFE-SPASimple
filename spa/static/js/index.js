@@ -25,9 +25,9 @@ function getParams(match) {
 
 async function router() {
   const routes = [
-    { path: '/',          view: (params) => new home(params) },
-    { path: '/jogos',     view: (params) => new games(params) },
-    { path: '/jogos/:id', view: (params) => new game(params) }
+    { path: '/',              view: (params) => new home(params) },
+    { path: '/jogos',         view: (params) => new games(params) },
+    { path: '/jogos/:gameId', view: (params) => new game(params) }
   ];
 
   const potencialMatches = routes.map(route => {
@@ -47,6 +47,7 @@ async function router() {
       route: routes[0],
       result: [ location.pathname ]
     };
+    location.pathname = routes[0].path;
   } else {
     match = matchs[0];
   }
@@ -54,6 +55,8 @@ async function router() {
   const view = match.route.view(getParams(match));
   
   document.querySelector('#app').innerHTML = view.getHtml();
+
+  await view.afterLoad();
 }
 
 window.addEventListener('popstate', router);
