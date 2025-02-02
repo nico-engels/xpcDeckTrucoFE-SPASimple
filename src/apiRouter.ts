@@ -168,8 +168,8 @@ async function finishRound(req: Request, res: Response) {
     } else if (reqApi.status === StatusCodes.CONFLICT) {
       const resApi = await reqApi.json();
 
-      if (resApi.message === 'xxx') {
-        return res.status(StatusCodes.CONFLICT).json({ message: 'xxx' }).end();
+      if (resApi.message === 'Round already finished!') {
+        return res.status(StatusCodes.OK).json({ message: 'kokok' }).end();
       } else {
         console.log(resApi);
         return res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
@@ -226,7 +226,7 @@ async function newPreAuthGame(req: Request, res: Response) {
     console.log(error);
     return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
   }
-}
+} 
 
 export default function apiTrucoRouter() {
   router.get('/game/info/:gameId', gameInfo);

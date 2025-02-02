@@ -8,6 +8,9 @@ export default class extends AbstractView {
   }
 
   getHtml() {
+
+    this.firstRun = true;
+
     return `
     <div id="all">
       <div id="header">
@@ -300,7 +303,9 @@ export default class extends AbstractView {
       msg_ret += ' ganhou o jogo em ' + new Date(gameInfo.endPlay).toLocaleString('pt-BR', optFmtDate) + '.\n';
     }
 
-    msg = '> Jogo iniciado em ' + new Date(gameInfo.startPlay).toLocaleString('pt-BR', optFmtDate) + '.\n' + msg;
+    if (this.firstRun) {
+      msg = '> Jogo iniciado em ' + new Date(gameInfo.startPlay).toLocaleString('pt-BR', optFmtDate) + '.\n' + msg;
+    }
 
     document.getElementById('msg_text').value = `${msg}${document.getElementById('msg_text').value}`;
 
@@ -372,6 +377,11 @@ export default class extends AbstractView {
 
     document.getElementById('msg_text').value = `${msg}${document.getElementById('msg_text').value}`;
 
+    this.round = 1;
+    this.cardsPlayed = 0;
+    this.finishedRound = false;
+    this.turnSeq = 0;
+
     return lastRound.id;
   }
 
@@ -400,12 +410,11 @@ export default class extends AbstractView {
       player1Ord = 2;
       player2Ord = 1;
     }
-
-    this.round = 1;
-    this.cardsPlayed = 0;
-    this.finishedRound = false;
+    
     let msg = '';
-    for (const t of checkData.turns) {
+    for (let i = this.turnSeq; i < checkData.lastTurnSeq; i++) {
+      const t = checkData.turns[i];      
+
       let log = `> ${t.seq} ${t.player} `;
 
       if (actionsDesc[t.cardOrAction]) {
@@ -458,6 +467,7 @@ export default class extends AbstractView {
 
       this.finishedRound = true;
       this.enableActions(['finishRound']);
+      clearInterval(this.interval);
 
       msg = `> ${winnerPlayer} ganhou a mão ${checkData.roundSeq} valendo ${checkData.score} pontos.\n${msg}`;
     } else if (checkData.turns.length > 0) {
@@ -482,6 +492,8 @@ export default class extends AbstractView {
 
     if (!playData) return;
 
+    document.getElementById('msg_text').value = document.getElementById('msg_text').value.replace('> É sua vez.\n', '');
+
     await this.check(this.roundId);
   }
 
@@ -494,7 +506,7 @@ export default class extends AbstractView {
 
     if (lastMsg) {
       document.getElementById('msg_text').value = `${lastMsg}${document.getElementById('msg_text').value}`;
-    }
+    }    
 
     this.interval = setInterval(async () => {
       if (!this.finishedRound) {
@@ -509,5 +521,9 @@ export default class extends AbstractView {
         }
       }
     }, 3000);
+
+    if (this.firstRun) {
+      this.firstRun = false;
+    }
   }
 }
