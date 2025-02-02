@@ -189,6 +189,45 @@ async function finishRound(req: Request, res: Response) {
   }
 }
 
+async function newPreAuthGame(req: Request, res: Response) {
+  try {
+    const reqApi = await fetch(`${process.env.BASE_URL_API}/auth/pre_game/new`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inh0LWFkbWluIiwidXNlcklkIjoyMiwiaWF0IjoxNzM4NDQ3NTEzLCJleHAiOjE3Mzg3MDY3MTN9.w-DT8hf5VeYkfYlI7NyKfIT4vCBWqOth9FKegrZ7eSk`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    if (reqApi.status === StatusCodes.OK) {
+      const resApi = await reqApi.json();
+
+      return res.status(StatusCodes.OK).json(resApi).end();
+    } else if (reqApi.status === StatusCodes.CONFLICT) {
+      const resApi = await reqApi.json();
+
+      if (resApi.message === 'xxx') {
+        return res.status(StatusCodes.CONFLICT).json({ message: 'xxx' }).end();
+      } else {
+        console.log(resApi);
+        return res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
+      }
+    } else if (reqApi.status === StatusCodes.NOT_FOUND) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário(s) não encontrados!' }).end();
+    } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    } else {
+      const res_api = await reqApi.text();
+
+      return res.status(reqApi.status).send(res_api).end();
+    }
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
 export default function apiTrucoRouter() {
   router.get('/game/info/:gameId', gameInfo);
   router.get('/round/last/:gameId', roundLast);
@@ -196,6 +235,7 @@ export default function apiTrucoRouter() {
 
   router.post('/turn/play', playTurn);
   router.post('/round/end', finishRound);
+  router.post('/auth/pre_game/new', newPreAuthGame);
 
   return router;
 }

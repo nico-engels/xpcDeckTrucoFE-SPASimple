@@ -9,6 +9,7 @@ export default class extends AbstractView {
 
   getHtml() {
     return `
+    <div id="all">
       <div id="header">
         <div id="player_2_name_round">
           <p id="player_2_name_p">-</p>
@@ -141,6 +142,7 @@ export default class extends AbstractView {
           <p id="player_1_name_p">-</p>
         </div>
       </div>  
+    </div>
     `;
   }
 
@@ -184,16 +186,22 @@ export default class extends AbstractView {
   }
 
   resetUI() {
+    document.getElementById('turn_3_card_2_img').src = '';
     document.getElementById('turn_3_card_2_img').style.display = 'none';
     document.getElementById('turn_3_card_2_img').classList.remove(['turn-winner']);
+    document.getElementById('turn_3_card_1_img').src = '';
     document.getElementById('turn_3_card_1_img').style.display = 'none';
     document.getElementById('turn_3_card_1_img').classList.remove(['turn-winner']);
+    document.getElementById('turn_2_card_2_img').src = '';
     document.getElementById('turn_2_card_2_img').style.display = 'none';
     document.getElementById('turn_2_card_2_img').classList.remove(['turn-winner']);
+    document.getElementById('turn_2_card_1_img').src = '';
     document.getElementById('turn_2_card_1_img').style.display = 'none';
     document.getElementById('turn_2_card_1_img').classList.remove(['turn-winner']);
+    document.getElementById('turn_1_card_2_img').src = '';
     document.getElementById('turn_1_card_2_img').style.display = 'none';
     document.getElementById('turn_1_card_2_img').classList.remove(['turn-winner']);
+    document.getElementById('turn_1_card_1_img').src = '';
     document.getElementById('turn_1_card_1_img').style.display = 'none';
     document.getElementById('turn_1_card_1_img').classList.remove(['turn-winner']);
 
