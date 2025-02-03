@@ -18,16 +18,22 @@ NodeJs 22.2
 
 Arquivo de rotas no index.ts:
 
-/static e /*: Rotas utilizada pelo SPA.
-/api-truco/: Rotas de consumo do back-end acessadas pelo SPA via fetch.
-/lnk/: Módulo de geração de links com jogos pré-autorizados onde o link serve
+`/static e /*`: Rotas utilizada pelo SPA.
+
+`/api-truco/`: Rotas de consumo do back-end acessadas pelo SPA via fetch.
+
+`/lnk/`: Módulo de geração de links com jogos pré-autorizados onde o link serve
 de chave para autenticar o usuário.
 
 Rotas no SPA /spa/static/js/index.js:
-/*: Página inicial vazia.
-/jogos: Lista de Jogos (não implementado)
-/jogos/gameId: Jogo.
-/pre-autz/player1/player2: Gerador de links para jogos pré-autorizados.
+
+`/*`: Página inicial vazia.
+
+`/jogos`: Lista de Jogos (não implementado).
+
+`/jogos/gameId`: Jogo.
+
+`/pre-autz/player1/player2`: Gerador de links para jogos pré-autorizados.
 
 Utilizado cookies para controle de sessão.
 
