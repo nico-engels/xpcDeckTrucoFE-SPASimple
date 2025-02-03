@@ -194,7 +194,7 @@ async function newPreAuthGame(req: Request, res: Response) {
     const reqApi = await fetch(`${process.env.BASE_URL_API}/auth/pre_game/new`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inh0LWFkbWluIiwidXNlcklkIjoyMiwiaWF0IjoxNzM4NDQ3NTEzLCJleHAiOjE3Mzg3MDY3MTN9.w-DT8hf5VeYkfYlI7NyKfIT4vCBWqOth9FKegrZ7eSk`,
+        Authorization: `Bearer ${process.env.TEMP_TOKEN_XT_ADMIN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(req.body),
