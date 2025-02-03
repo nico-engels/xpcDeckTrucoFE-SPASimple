@@ -11,6 +11,7 @@ Atualmente apenas cria novos jogos pela API de jogos pré-autorizados.
 ## Tecnologias
 
 Typescript 5.7
+
 NodeJs 22.2
 
 ## Arquitetura
@@ -30,11 +31,11 @@ Rotas no SPA /spa/static/js/index.js:
 
 Utilizado cookies para controle de sessão.
 
-# Back-end
+## Back-end
 
 Projeto `xpcDeckTrucoBE` com a API REST consumida pelo front.
 
-# Executando
+## Executando
 
 Deve ser definido no arquivo `.env`:
 - BASE_URL_API: URL apontando para o método (HTTP ou HTTPS) host e porta do
