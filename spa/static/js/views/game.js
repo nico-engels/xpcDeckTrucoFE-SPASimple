@@ -248,6 +248,52 @@ export default class extends AbstractView {
           this.resetUI();
           await this.afterLoad();
         };
+      } else if (actions[i] === 'Tr') {
+        elem.textContent = 'Truco';
+        elem.disabled = false;
+        elem.onclick = async () => {
+          await this.playAction('Tr');
+          this.enableActions([]);
+        };
+      } else if (actions[i] === 'Sx') {
+        elem.textContent = 'Seis';
+        elem.disabled = false;
+        elem.onclick = async () => {
+          await this.playAction('Sx');
+          this.enableActions([]);
+        };       
+      } else if (actions[i] === 'Nn') {
+        elem.textContent = 'Nove';
+        elem.disabled = false;
+        elem.onclick = async () => {
+          await this.playAction('Nn');
+          this.enableActions([]);
+        };       
+      } else if (actions[i] === 'Tw') {
+        elem.textContent = 'Doze';
+        elem.disabled = false;
+        elem.onclick = async () => {
+          await this.playAction('Tw');
+          this.enableActions([]);
+        };                  
+      } else if (actions[i] === 'Ys') {
+        elem.textContent = 'Sim';
+        elem.disabled = false;
+        elem.onclick = async () => {
+          await this.playAction('Ys');
+        };
+      } else if (actions[i] === 'No') {
+        elem.textContent = 'Não';
+        elem.disabled = false;
+        elem.onclick = async () => {
+          await this.playAction('No');
+        };
+      } else if (actions[i] === 'Gu') {
+        elem.textContent = 'Desistir';
+        elem.disabled = false;
+        elem.onclick = async () => {
+          await this.playAction('Gu');
+        };
       }
     }
   }
@@ -264,6 +310,7 @@ export default class extends AbstractView {
     this.roundId = gameInfo.lastRoundId;
     this.readonly = gameInfo.readonly;
     this.turnSeq = 0;
+    this.finishedGame = false;
 
     let msg = '';
     let p1nameSuf = '';
@@ -301,6 +348,8 @@ export default class extends AbstractView {
         msg_ret += gameInfo.player2;
       }
       msg_ret += ' ganhou o jogo em ' + new Date(gameInfo.endPlay).toLocaleString('pt-BR', optFmtDate) + '.\n';
+
+      this.finishedGame = true;
     }
 
     if (this.firstRun) {
@@ -396,9 +445,9 @@ export default class extends AbstractView {
   async check(roundId) {
     const checkData = await this.consumeApi(`/api-truco/turn/check/${roundId}`, { method: 'GET' });
 
-    if (!checkData || checkData.lastTurnSeq == this.turnSeq) return;
+    if (!checkData || (checkData.lastTurnSeq == this.turnSeq && !this.firstRun)) return;
 
-    const actionsDesc = { Tr: 'TRUCO', Sx: 'SEIS' };
+    const actionsDesc = { Tr: 'TRUCO', Sx: 'SEIS', Nn: 'NOVE', Tw: 'DOZE' };
     const aswerDesc = { Ys: 'sim', No: 'não' };
 
     let player1Ord;
@@ -421,6 +470,8 @@ export default class extends AbstractView {
         log += `pediu ${actionsDesc[t.cardOrAction]}`;
       } else if (aswerDesc[t.cardOrAction]) {
         log += `respondeu ${aswerDesc[t.cardOrAction]}`;
+      } else if (t.cardOrAction === 'Gu') {
+        log += `desistiu da mão`;
       } else {
         log += `jogou ${t.cardOrAction}`;
         this.cardsPlayed++;
@@ -437,7 +488,7 @@ export default class extends AbstractView {
 
       msg = log + '.\n' + msg;
 
-      if (this.cardsPlayed && !(this.cardsPlayed % 2)) {
+      if (this.cardsPlayed && !(this.cardsPlayed % 2) && checkData.TriTurnWinner[this.round - 1]) {
         let winnerPlayer = '';
         if (checkData.TriTurnWinner[this.round - 1] == 1) {
           msg = `> ${checkData.player1} ganhou a rodada ${this.round}.\n${msg}`;
@@ -457,6 +508,9 @@ export default class extends AbstractView {
       this.turnSeq = t.seq;
     }
 
+    document.getElementById('score_text_s').innerText = `+${checkData.score}`;
+
+    this.enableActions([]);
     if (checkData.roundWinner) {
       let winnerPlayer = '';
       if (checkData.roundWinner == 1) {
@@ -474,6 +528,10 @@ export default class extends AbstractView {
       if (checkData.nextPlayerId == this.player1Id) {
         msg = `> É sua vez.\n${msg}`;
       }
+    }
+
+    if (!checkData.roundWinner && checkData.nextPlayerId == this.player1Id && checkData.possibleActions) {
+      this.enableActions(checkData.possibleActions);      
     }
 
     document.getElementById('msg_text').value = `${msg}${document.getElementById('msg_text').value}`;
@@ -497,6 +555,24 @@ export default class extends AbstractView {
     await this.check(this.roundId);
   }
 
+  async playAction(which) {
+    const playData = await this.consumeApi('/api-truco/turn/play', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        roundId: this.roundId,
+        prevSeq: this.turnSeq,
+        cardOrAction: which,
+      }),
+    });
+
+    if (!playData) return;
+
+    document.getElementById('msg_text').value = document.getElementById('msg_text').value.replace('> É sua vez.\n', '');
+
+    await this.check(this.roundId);
+  }  
+
   async afterLoad() {
     if (!this.params.gameId) return;
 
@@ -506,11 +582,17 @@ export default class extends AbstractView {
 
     if (lastMsg) {
       document.getElementById('msg_text').value = `${lastMsg}${document.getElementById('msg_text').value}`;
-    }    
+    }   
+    
+    if (this.finishedGame) {
+      this.enableActions([]);    
+      return;
+    }
 
     this.interval = setInterval(async () => {
       if (!this.finishedRound) {
         await this.check(lastRoundId);
+
       } else {
         const newRoundId = await this.loadLastRoundId(this.params.gameId);
 
