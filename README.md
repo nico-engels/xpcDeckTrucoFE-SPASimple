@@ -8,6 +8,8 @@ navegador.
 
 Atualmente apenas cria novos jogos pela API de jogos pré-autorizados.
 
+![Demonstração](game-demo.gif "Demonstração")
+
 ## Tecnologias
 
 Typescript 5.7
