@@ -30,9 +30,9 @@ export default class extends AbstractView {
     return `
       <pre>Criado o jogo para o usuário '${this.params.player1}' e '${this.params.player2}'</pre><br/>
       <pre>HTTP ${req.status}</pre>
-      <pre>${resp}</pre>
-      <pre>${linkPlayer1}</pre>
-      <pre>${linkPlayer2}</pre>
+      <pre>${resp}</pre><br/>
+      <pre><a href="${linkPlayer1}">${linkPlayer1}</a></pre><br/>
+      <pre><a href="${linkPlayer2}">${linkPlayer2}</a></pre>
     `;
   }
 }

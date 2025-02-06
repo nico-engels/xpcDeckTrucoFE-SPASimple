@@ -90,6 +90,10 @@ pre {
   margin: 0px;
 }
 
+h1 {
+  margin: 0px;
+}
+
 #app {
   margin: auto;
   width: 720px;
