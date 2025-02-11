@@ -8,8 +8,8 @@ export default class extends AbstractView {
   }
 
   getHtml() {
-
     this.firstRun = true;
+    this.firstRoundRun = true;
 
     return `
     <div id="all">
@@ -153,7 +153,7 @@ export default class extends AbstractView {
     const req = await fetch(url, requestCfg);
     const resp = await req.text();
 
-    if (req.status === 401 || req.status === 404 || req.status === 409) {
+    if (req.status === 401 || req.status === 403 || req.status === 404 || req.status === 409) {
       document.getElementById('msg_text').value = `> ${JSON.parse(resp).message}\n${document.getElementById('msg_text').value}`;
       throw JSON.parse(resp).message;
     } else if (req.status === 200) {
@@ -246,6 +246,7 @@ export default class extends AbstractView {
 
           clearInterval(this.interval);
           this.resetUI();
+          this.firstRoundRun = true;
           await this.afterLoad();
         };
       } else if (actions[i] === 'Tr') {
@@ -261,21 +262,21 @@ export default class extends AbstractView {
         elem.onclick = async () => {
           await this.playAction('Sx');
           this.enableActions([]);
-        };       
+        };
       } else if (actions[i] === 'Nn') {
         elem.textContent = 'Nove';
         elem.disabled = false;
         elem.onclick = async () => {
           await this.playAction('Nn');
           this.enableActions([]);
-        };       
+        };
       } else if (actions[i] === 'Tw') {
         elem.textContent = 'Doze';
         elem.disabled = false;
         elem.onclick = async () => {
           await this.playAction('Tw');
           this.enableActions([]);
-        };                  
+        };
       } else if (actions[i] === 'Ys') {
         elem.textContent = 'Sim';
         elem.disabled = false;
@@ -445,7 +446,7 @@ export default class extends AbstractView {
   async check(roundId) {
     const checkData = await this.consumeApi(`/api-truco/turn/check/${roundId}`, { method: 'GET' });
 
-    if (!checkData || (checkData.lastTurnSeq == this.turnSeq && !this.firstRun)) return;
+    if (!checkData || (checkData.lastTurnSeq == this.turnSeq && !this.firstRun && !this.firstRoundRun)) return;
 
     const actionsDesc = { Tr: 'TRUCO', Sx: 'SEIS', Nn: 'NOVE', Tw: 'DOZE' };
     const aswerDesc = { Ys: 'sim', No: 'não' };
@@ -459,10 +460,10 @@ export default class extends AbstractView {
       player1Ord = 2;
       player2Ord = 1;
     }
-    
+
     let msg = '';
     for (let i = this.turnSeq; i < checkData.lastTurnSeq; i++) {
-      const t = checkData.turns[i];      
+      const t = checkData.turns[i];
 
       let log = `> ${t.seq} ${t.player} `;
 
@@ -488,7 +489,7 @@ export default class extends AbstractView {
 
       msg = log + '.\n' + msg;
 
-      if (this.cardsPlayed && !(this.cardsPlayed % 2) && checkData.TriTurnWinner[this.round - 1]) {
+      if (this.cardsPlayed && !(this.cardsPlayed % 2) && checkData.TriTurnWinner[this.round - 1] !== undefined) {
         let winnerPlayer = '';
         if (checkData.TriTurnWinner[this.round - 1] == 1) {
           msg = `> ${checkData.player1} ganhou a rodada ${this.round}.\n${msg}`;
@@ -531,7 +532,7 @@ export default class extends AbstractView {
     }
 
     if (!checkData.roundWinner && checkData.nextPlayerId == this.player1Id && checkData.possibleActions) {
-      this.enableActions(checkData.possibleActions);      
+      this.enableActions(checkData.possibleActions);
     }
 
     document.getElementById('msg_text').value = `${msg}${document.getElementById('msg_text').value}`;
@@ -571,7 +572,7 @@ export default class extends AbstractView {
     document.getElementById('msg_text').value = document.getElementById('msg_text').value.replace('> É sua vez.\n', '');
 
     await this.check(this.roundId);
-  }  
+  }
 
   async afterLoad() {
     if (!this.params.gameId) return;
@@ -582,17 +583,16 @@ export default class extends AbstractView {
 
     if (lastMsg) {
       document.getElementById('msg_text').value = `${lastMsg}${document.getElementById('msg_text').value}`;
-    }   
-    
+    }
+
     if (this.finishedGame) {
-      this.enableActions([]);    
+      this.enableActions([]);
       return;
     }
 
     this.interval = setInterval(async () => {
       if (!this.finishedRound) {
         await this.check(lastRoundId);
-
       } else {
         const newRoundId = await this.loadLastRoundId(this.params.gameId);
 
@@ -606,6 +606,10 @@ export default class extends AbstractView {
 
     if (this.firstRun) {
       this.firstRun = false;
+    }
+
+    if (this.firstRoundRun) {
+      this.firstRoundRun = false;
     }
   }
 }
