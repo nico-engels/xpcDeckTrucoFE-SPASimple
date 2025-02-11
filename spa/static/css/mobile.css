@@ -60,7 +60,7 @@
 }
 
 .btn:active {
-  transform: translateY(1px);
+  transform: translateY(3px) translateX(3px);
   box-shadow: none;
 }
 

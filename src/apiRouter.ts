@@ -133,6 +133,8 @@ async function playTurn(req: Request, res: Response) {
         return res.status(StatusCodes.CONFLICT).json({ message: 'Não é sua vez!' }).end();
       } else if (resApi.message === 'Round is over!') {
         return res.status(StatusCodes.CONFLICT).json({ message: 'A mão encerrou!' }).end();
+      } else if (resApi.message === 'Elevation needs a answer!') {
+        return res.status(StatusCodes.CONFLICT).json({ message: 'Responda nos botões para jogar!' }).end();  
       } else {
         console.log(resApi);
         return res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
