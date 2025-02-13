@@ -1,6 +1,7 @@
 # xpcDeckTrucoFE-SPASimple - Jogo de Truco Paulista usando API
 
-Projeto de portifólio de front-end desenvolvido usando Typescript.
+Front-end desenvolvido usando Typescript simples para demonstrar o consumo de API
+back-end (xpcDeckTrucoBE).
 
 Usa o conceito de Single Page Aplication (SPA) onde existe apenas uma página
 HTML e a navegação e renderização de páginas é feito via Javascript no
