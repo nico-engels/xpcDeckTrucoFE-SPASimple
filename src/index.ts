@@ -4,7 +4,8 @@ import fs from 'fs';
 import express, { Request, Response } from 'express';
 import http from 'node:http';
 import https from 'node:https';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import session from 'express-session';
 
 import apiLnk from './apiLnk.ts';
@@ -27,6 +28,10 @@ app.use(
     },
   }),
 );
+
+if (!import.meta.dirname)
+  import.meta.dirname = dirname(fileURLToPath(import.meta.url));
+
 app.use('/static', express.static(path.resolve(import.meta.dirname, '../spa', 'static')));
 app.use('/api-truco/', apiRouter());
 app.use('/lnk/', apiLnk());
