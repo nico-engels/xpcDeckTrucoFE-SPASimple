@@ -13,7 +13,8 @@ const router = express.Router();
 
 async function gameInfo(req: Request, res: Response) {
   if (!req.params.gameId || Number.isNaN(parseInt(req.params.gameId))) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo inválido!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo inválido!' }).end();
+    return;
   }
 
   const session = req.session as xpcSession;
@@ -38,23 +39,24 @@ async function gameInfo(req: Request, res: Response) {
       resApi.readonly = true;
     }
 
-    return res.status(StatusCodes.OK).json(resApi).end();
+    res.status(StatusCodes.OK).json(resApi).end();
   } else if (reqApi.status === StatusCodes.NOT_FOUND) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
   } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
   } else if (reqApi.status === StatusCodes.FORBIDDEN) {
-    return res.status(StatusCodes.FORBIDDEN).json({ message: 'Acesso apenas ao jogo do link!' }).end();
+    res.status(StatusCodes.FORBIDDEN).json({ message: 'Acesso apenas ao jogo do link!' }).end();
   } else {
     const resApi = await reqApi.text();
 
-    return res.status(reqApi.status).send(resApi).end();
+    res.status(reqApi.status).send(resApi).end();
   }
 }
 
 async function roundLast(req: Request, res: Response) {
   if (!req.params.gameId || Number.isNaN(parseInt(req.params.gameId))) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo inválido!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo inválido!' }).end();
+    return;
   }
 
   const reqApi = await fetch(`${process.env.BASE_URL_API}/round/last/${req.params.gameId}`, {
@@ -67,21 +69,22 @@ async function roundLast(req: Request, res: Response) {
   if (reqApi.status === StatusCodes.OK) {
     const resApi = await reqApi.json();
 
-    return res.status(StatusCodes.OK).json(resApi).end();
+    res.status(StatusCodes.OK).json(resApi).end();
   } else if (reqApi.status === StatusCodes.NOT_FOUND) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
   } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
   } else {
     const resApi = await reqApi.text();
 
-    return res.status(reqApi.status).send(resApi).end();
+    res.status(reqApi.status).send(resApi).end();
   }
 }
 
 async function checkRound(req: Request, res: Response) {
   if (!req.params.roundId || Number.isNaN(parseInt(req.params.roundId))) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo inválido!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo inválido!' }).end();
+    return;
   }
 
   const reqApi = await fetch(`${process.env.BASE_URL_API}/turn/check/${req.params.roundId}`, {
@@ -94,15 +97,15 @@ async function checkRound(req: Request, res: Response) {
   if (reqApi.status === StatusCodes.OK) {
     const resApi = await reqApi.json();
 
-    return res.status(StatusCodes.OK).json(resApi).end();
+    res.status(StatusCodes.OK).json(resApi).end();
   } else if (reqApi.status === StatusCodes.NOT_FOUND) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
   } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
   } else {
     const resApi = await reqApi.text();
 
-    return res.status(reqApi.status).send(resApi).end();
+    res.status(reqApi.status).send(resApi).end();
   }
 }
 
@@ -119,28 +122,28 @@ async function playTurn(req: Request, res: Response) {
   if (reqApi.status === StatusCodes.OK) {
     const resApi = await reqApi.json();
 
-    return res.status(StatusCodes.OK).json(resApi).end();
+    res.status(StatusCodes.OK).json(resApi).end();
   } else if (reqApi.status === StatusCodes.CONFLICT) {
     const resApi = await reqApi.json();
 
     if (resApi.message === 'Not your turn!') {
-      return res.status(StatusCodes.CONFLICT).json({ message: 'Não é sua vez!' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'Não é sua vez!' }).end();
     } else if (resApi.message === 'Round is over!') {
-      return res.status(StatusCodes.CONFLICT).json({ message: 'A mão encerrou!' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'A mão encerrou!' }).end();
     } else if (resApi.message === 'Elevation needs a answer!') {
-      return res.status(StatusCodes.CONFLICT).json({ message: 'Responda nos botões para jogar!' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'Responda nos botões para jogar!' }).end();
     } else {
       console.log(resApi);
-      return res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
     }
   } else if (reqApi.status === StatusCodes.NOT_FOUND) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
   } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
   } else {
     const resApi = await reqApi.text();
 
-    return res.status(reqApi.status).send(resApi).end();
+    res.status(reqApi.status).send(resApi).end();
   }
 }
 
@@ -157,24 +160,24 @@ async function finishRound(req: Request, res: Response) {
   if (reqApi.status === StatusCodes.OK) {
     const resApi = await reqApi.json();
 
-    return res.status(StatusCodes.OK).json(resApi).end();
+    res.status(StatusCodes.OK).json(resApi).end();
   } else if (reqApi.status === StatusCodes.CONFLICT) {
     const resApi = await reqApi.json();
 
     if (resApi.message === 'Round already finished!') {
-      return res.status(StatusCodes.OK).json({ message: 'kokok' }).end();
+      res.status(StatusCodes.OK).json({ message: 'kokok' }).end();
     } else {
       console.log(resApi);
-      return res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
     }
   } else if (reqApi.status === StatusCodes.NOT_FOUND) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Jogo não encontrado!' }).end();
   } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
   } else {
     const resApi = await reqApi.text();
 
-    return res.status(reqApi.status).send(resApi).end();
+    res.status(reqApi.status).send(resApi).end();
   }
 }
 
@@ -191,24 +194,24 @@ async function newPreAuthGame(req: Request, res: Response) {
   if (reqApi.status === StatusCodes.OK) {
     const resApi = await reqApi.json();
 
-    return res.status(StatusCodes.OK).json(resApi).end();
+    res.status(StatusCodes.OK).json(resApi).end();
   } else if (reqApi.status === StatusCodes.CONFLICT) {
     const resApi = await reqApi.json();
 
     if (resApi.message === 'xxx') {
-      return res.status(StatusCodes.CONFLICT).json({ message: 'xxx' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'xxx' }).end();
     } else {
       console.log(resApi);
-      return res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
     }
   } else if (reqApi.status === StatusCodes.NOT_FOUND) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário(s) não encontrados!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário(s) não encontrados!' }).end();
   } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
   } else {
     const resApi = await reqApi.text();
 
-    return res.status(reqApi.status).send(resApi).end();
+    res.status(reqApi.status).send(resApi).end();
   }
 }
 
@@ -224,24 +227,24 @@ async function listPreAuthGame(req: Request, res: Response) {
   if (reqApi.status === StatusCodes.OK) {
     const resApi = await reqApi.json();
 
-    return res.status(StatusCodes.OK).json(resApi).end();
+    res.status(StatusCodes.OK).json(resApi).end();
   } else if (reqApi.status === StatusCodes.CONFLICT) {
     const resApi = await reqApi.json();
 
     if (resApi.message === 'xxx') {
-      return res.status(StatusCodes.CONFLICT).json({ message: 'xxx' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'xxx' }).end();
     } else {
       console.log(resApi);
-      return res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
+      res.status(StatusCodes.CONFLICT).json({ message: 'Mensagem de erro não tratada!' }).end();
     }
   } else if (reqApi.status === StatusCodes.NOT_FOUND) {
-    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário(s) não encontrados!' }).end();
+    res.status(StatusCodes.NOT_FOUND).json({ message: 'Usuário(s) não encontrados!' }).end();
   } else if (reqApi.status === StatusCodes.UNAUTHORIZED) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Deve estar autenticado!' }).end();
   } else {
     const resApi = await reqApi.text();
 
-    return res.status(reqApi.status).send(resApi).end();
+    res.status(reqApi.status).send(resApi).end();
   }
 }
 

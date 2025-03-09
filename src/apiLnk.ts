@@ -36,12 +36,10 @@ async function consumeLink(req: Request, res: Response) {
     session.userid = resApi.playerId;
 
     res.redirect(`/jogos/${resApi.gameId}`);
-    return;
   } else {
     console.log({ playerLink: req.params.playerLink, deviceId: session.deviceID }, await reqApi.text());
 
     res.redirect('/');
-    return;
   }
 }
 
