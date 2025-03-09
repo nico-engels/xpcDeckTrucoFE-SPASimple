@@ -3,15 +3,15 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import express, { ErrorRequestHandler, Request, Response } from 'express';
 import 'express-async-errors';
+import session from 'express-session';
 import { StatusCodes } from 'http-status-codes';
 import http from 'node:http';
 import https from 'node:https';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import session from 'express-session';
 
 import apiLnk from './apiLnk.ts';
-import apiRouter from './apiRouter.ts';
+import apiRouter, { xpcSession } from './apiRouter.ts';
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(
   session({
-    secret: 'your_secret_key',
+    secret: `${process.env.COOKIE_SCRT}`,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -45,8 +45,9 @@ app.use('/api-truco/', apiRouter());
 app.use('/lnk/', apiLnk());
 
 app.get('/*', (req: Request, res: Response) => {
-  if (!req.session.deviceID) {
-    req.session.deviceID = crypto.randomUUID();
+  const session = req.session as xpcSession;
+  if (!session.deviceID) {
+    session.deviceID = crypto.randomUUID();
   }
 
   res.sendFile(path.resolve(import.meta.dirname, '../spa', 'index.html'));
