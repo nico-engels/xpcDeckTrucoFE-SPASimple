@@ -38,6 +38,8 @@ Rotas no SPA /spa/static/js/index.js:
 
 `/pre-autz/player1/player2`: Gerador de links para jogos pré-autorizados.
 
+`/pre-autz/lista`: Lista dos jogos pré-autorizados criados.
+
 Utilizado cookies para controle de sessão.
 
 ## Back-end
@@ -50,6 +52,9 @@ Deve ser definido no arquivo `.env`:
 
 - BASE_URL_API: URL apontando para o método (HTTP ou HTTPS) host e porta do
   servidor de back-end.
+- TEMP_TOKEN_XT_ADMIN: Token JWT para a criação de jogos pré-autorizados.
+- COOKIE_SCRT: Secret (string) utilizado ao assinar o cookie. Informar uma
+  string aleatória.
 
 O servidor escuta nas portas 7779 (https) e 7780 (http). O certificado deve ser
 informado na pasta rec/sslcert/(selfsigned.key e selfsigned.crt).
