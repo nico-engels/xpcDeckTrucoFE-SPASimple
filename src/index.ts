@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import crypto from 'node:crypto';
 import fs from 'fs';
 import express, { ErrorRequestHandler, Request, Response } from 'express';
 import 'express-async-errors';
@@ -60,10 +61,13 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
 app.use(errorHandler);
 
-server_https.listen(7779, () => {
-  console.log('xpdDeck-Truco Front running (7779 https)');
+const http_port = process.env.HTTP_PORT || 7779;
+const https_port = process.env.HTTPS_PORT || 7780;
+
+server_https.listen(https_port, () => {
+  console.log(`xpcDeck-Truco Front running (${https_port} https)`);
 });
 
-server_http.listen(7780, () => {
-  console.log('xpdDeck-Truco Front running (7780 http)');
+server_http.listen(http_port, () => {
+  console.log(`xpcDeck-Truco Front running (${http_port} http)`);
 });
